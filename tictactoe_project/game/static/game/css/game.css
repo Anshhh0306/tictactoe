@@ -1,0 +1,781 @@
+:root {
+  --bg-primary: #407bff;
+  --bg-secondary: #8a5cff;
+  --accent: #50f0ff;
+  --card-bg: rgba(15, 35, 72, 0.58);
+  --card-border: rgba(133, 173, 255, 0.35);
+  --text-primary: #f5f6ff;
+  --text-muted: rgba(232, 237, 255, 0.75);
+  --cell-bg: rgba(10, 22, 52, 0.65);
+  --cell-border: rgba(122, 164, 255, 0.5);
+  --cell-hover: rgba(112, 191, 255, 0.2);
+  --x-color: #50f0ff;
+  --o-color: #ff6b9d;
+  --winner-glow: rgba(80, 240, 255, 0.4);
+  --button-bg: #35d38c;
+  --button-bg-hover: #2fb177;
+  --logout-bg: rgba(255, 107, 107, 0.2);
+  --logout-border: rgba(255, 107, 107, 0.4);
+  --radius-xl: 32px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --shadow-xl: 0 40px 120px rgba(11, 19, 46, 0.55);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Poppins", "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  background: radial-gradient(circle at top right, rgba(120, 175, 255, 0.45), transparent 55%),
+              radial-gradient(circle at 15% 20%, rgba(139, 99, 255, 0.5), transparent 55%),
+              linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  position: relative;
+}
+
+body::before,
+body::after {
+  content: "";
+  position: absolute;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, transparent 70%);
+  filter: blur(8px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+body::before {
+  top: -220px;
+  right: -180px;
+}
+
+body::after {
+  bottom: -260px;
+  left: -200px;
+}
+
+/* Cheering Squads */
+.cheering-squad {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  z-index: 0;
+  transition: all 0.5s ease;
+}
+
+.x-team {
+  left: 2%;
+}
+
+.o-team {
+  right: 2%;
+}
+
+.supporter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+.supporter-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.supporter-head {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff, #e8f0ff 60%, #c5d9ff);
+  border: 3px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Eyes */
+.supporter-head::before,
+.supporter-head::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #1a1a2e 60%, #16213e);
+  border-radius: 50%;
+  top: 18px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.supporter-head::before {
+  left: 13px;
+}
+
+.supporter-head::after {
+  right: 13px;
+}
+
+/* Smile */
+.supporter-head {
+  background-image: 
+    radial-gradient(circle at 35% 35%, #ffffff, #e8f0ff 60%, #c5d9ff),
+    radial-gradient(ellipse 16px 8px at 50% 32px, transparent 50%, #ff8fa3 51%);
+}
+
+/* Team-specific styling */
+.x-team .supporter-head {
+  border-color: var(--x-color);
+  box-shadow: 0 6px 20px rgba(80, 240, 255, 0.6), 
+              0 0 30px rgba(80, 240, 255, 0.4),
+              inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  animation: glowPulseX 2s ease-in-out infinite;
+}
+
+.o-team .supporter-head {
+  border-color: var(--o-color);
+  box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6),
+              0 0 30px rgba(255, 107, 157, 0.4),
+              inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  animation: glowPulseO 2s ease-in-out infinite;
+}
+
+/* Body/Torso */
+.supporter-body::before {
+  content: '';
+  position: absolute;
+  bottom: -25px;
+  width: 35px;
+  height: 35px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(200, 220, 255, 0.2));
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: -1;
+}
+
+.x-team .supporter-body::before {
+  background: linear-gradient(135deg, rgba(80, 240, 255, 0.3), rgba(64, 200, 255, 0.2));
+  border-color: var(--x-color);
+}
+
+.o-team .supporter-body::before {
+  background: linear-gradient(135deg, rgba(255, 107, 157, 0.3), rgba(255, 140, 180, 0.2));
+  border-color: var(--o-color);
+}
+
+.supporter-sign {
+  background: linear-gradient(135deg, #ffffff, #f0f5ff);
+  padding: 0.6rem 1.2rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2), 
+              inset 0 1px 2px rgba(255, 255, 255, 0.8);
+  animation: signWave 1.5s ease-in-out infinite;
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  letter-spacing: 0.5px;
+}
+
+.x-team .supporter-sign {
+  color: var(--x-color);
+  border: 3px solid var(--x-color);
+  background: linear-gradient(135deg, #e0f7ff, #ffffff);
+  box-shadow: 0 6px 16px rgba(80, 240, 255, 0.4),
+              0 0 20px rgba(80, 240, 255, 0.2),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.o-team .supporter-sign {
+  color: var(--o-color);
+  border: 3px solid var(--o-color);
+  background: linear-gradient(135deg, #ffe0ed, #ffffff);
+  box-shadow: 0 6px 16px rgba(255, 107, 157, 0.4),
+              0 0 20px rgba(255, 107, 157, 0.2),
+              inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.supporter-sign::before {
+  content: '';
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 25px;
+  background: linear-gradient(180deg, rgba(100, 100, 100, 0.8), rgba(80, 80, 80, 0.6));
+  border-radius: 2px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes glowPulseX {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(80, 240, 255, 0.6), 
+                0 0 30px rgba(80, 240, 255, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 0 6px 25px rgba(80, 240, 255, 0.8), 
+                0 0 40px rgba(80, 240, 255, 0.6),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  }
+}
+
+@keyframes glowPulseO {
+  0%, 100% {
+    box-shadow: 0 6px 20px rgba(255, 107, 157, 0.6),
+                0 0 30px rgba(255, 107, 157, 0.4),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  }
+  50% {
+    box-shadow: 0 6px 25px rgba(255, 107, 157, 0.8),
+                0 0 40px rgba(255, 107, 157, 0.6),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8);
+  }
+}
+
+/* Celebrating animation */
+.cheering-squad.celebrating {
+  animation: celebrate 0.8s ease-in-out infinite !important;
+  z-index: 10 !important;
+}
+
+.cheering-squad.celebrating .supporter {
+  animation: jump 0.5s ease-in-out infinite !important;
+}
+
+.cheering-squad.celebrating .supporter-sign {
+  animation: signCelebrate 0.6s ease-in-out infinite !important;
+  transform-origin: center center;
+}
+
+.cheering-squad.celebrating .supporter-head {
+  animation: headShake 0.4s ease-in-out infinite !important;
+}
+
+/* Defeated animation */
+.cheering-squad.defeated {
+  opacity: 0.3;
+  filter: grayscale(80%);
+  transform: translateY(-50%) scale(0.9);
+}
+
+.cheering-squad.defeated .supporter {
+  animation: disappointed 2s ease-in-out infinite;
+}
+
+.cheering-squad.defeated .supporter-head {
+  transform: rotateZ(-15deg);
+}
+
+/* Neutral animation (Draw) */
+.cheering-squad.neutral .supporter {
+  animation: shrug 2s ease-in-out infinite;
+}
+
+/* Confetti */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  width: 200px;
+  height: 100vh;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.x-team .confetti-container {
+  left: 0;
+}
+
+.o-team .confetti-container {
+  right: 0;
+}
+
+.confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  animation: confettiFall 3s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes signWave {
+  0%, 100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes celebrate {
+  0%, 100% {
+    transform: translateY(-50%) scale(1);
+  }
+  25% {
+    transform: translateY(-55%) scale(1.1);
+  }
+  75% {
+    transform: translateY(-45%) scale(1.05);
+  }
+}
+
+@keyframes jump {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-40px) scale(1.15) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-50px) scale(1.2) rotate(5deg);
+  }
+  75% {
+    transform: translateY(-40px) scale(1.15) rotate(-5deg);
+  }
+}
+
+@keyframes signCelebrate {
+  0%, 100% {
+    transform: rotate(-20deg) scale(1);
+  }
+  25% {
+    transform: rotate(25deg) scale(1.3);
+  }
+  50% {
+    transform: rotate(-25deg) scale(1.25);
+  }
+  75% {
+    transform: rotate(20deg) scale(1.3);
+  }
+}
+
+@keyframes headShake {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-10deg) scale(1.1);
+@keyframes confettiFall {
+  0% {
+    top: -10px;
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    top: 110vh;
+    transform: translateX(150px) rotate(1080deg);
+    opacity: 0.5;
+  }
+}   transform: translateY(5px);
+  }
+}
+
+@keyframes shrug {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(5deg);
+  }
+}
+
+@keyframes confettiFall {
+  0% {
+    top: -10px;
+    transform: translateX(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    top: 100vh;
+    transform: translateX(100px) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.floating-spark {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(80, 240, 255, 0.35), transparent 70%);
+  filter: blur(6px);
+  animation: drift 16s ease-in-out infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.floating-spark:nth-of-type(1) {
+  top: 10%;
+  left: 6%;
+  animation-delay: -3s;
+}
+
+.floating-spark:nth-of-type(2) {
+  bottom: 12%;
+  right: 10%;
+  animation-delay: 2s;
+}
+
+.game-container {
+  width: min(500px, 90%);
+  z-index: 1;
+  position: relative;
+  margin: 0;
+}
+
+.glass-card {
+  backdrop-filter: blur(26px) saturate(135%);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.2), transparent 25%, transparent 75%, rgba(255, 255, 255, 0.08));
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.game-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.player-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.player-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--bg-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.25rem;
+  box-shadow: 0 8px 24px rgba(80, 240, 255, 0.3);
+}
+
+.player-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.logout-btn {
+  padding: 0.65rem 1.25rem;
+  background: var(--logout-bg);
+  border: 1px solid var(--logout-border);
+  color: #ffbaba;
+  font-weight: 500;
+  font-size: 0.9rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 107, 107, 0.3);
+  transform: translateY(-2px);
+}
+
+.game-status {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.status-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.78);
+  margin-bottom: 0.75rem;
+}
+
+.status-message {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0;
+  animation: fadeInScale 0.5s ease;
+}
+
+.status-message.winner {
+  background: linear-gradient(135deg, var(--accent), var(--x-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: winnerGlow 2s ease-in-out infinite;
+}
+
+.status-message .turn-indicator {
+  color: var(--accent);
+  font-size: 2rem;
+  display: inline-block;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.cell {
+  aspect-ratio: 1;
+  background: var(--cell-bg);
+  border: 2px solid var(--cell-border);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 80px;
+}
+
+.cell::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cell:hover::before {
+  opacity: 1;
+}
+
+.cell:hover:not(.filled) {
+  background: var(--cell-hover);
+  border-color: var(--accent);
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(80, 240, 255, 0.2);
+}
+
+.cell.filled {
+  cursor: default;
+  animation: cellFill 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.cell.x {
+  color: var(--x-color);
+  text-shadow: 0 0 20px var(--winner-glow);
+}
+
+.cell.o {
+  color: var(--o-color);
+  text-shadow: 0 0 20px rgba(255, 107, 157, 0.4);
+}
+
+.cell button {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  color: transparent;
+  cursor: pointer;
+  font-size: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+}
+
+.cell button:hover {
+  background: rgba(80, 240, 255, 0.1);
+}
+
+.cell.winning {
+  animation: winningCell 1s ease-in-out infinite;
+  border-color: var(--accent);
+  box-shadow: 0 0 30px var(--winner-glow), inset 0 0 20px var(--winner-glow);
+}
+
+.actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.play-again-btn {
+  padding: 1rem 2.5rem;
+  background: linear-gradient(135deg, var(--button-bg), #27c079);
+  border: none;
+  border-radius: var(--radius-md);
+  color: #04371e;
+  font-weight: 600;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 16px 32px rgba(26, 192, 127, 0.28);
+}
+
+.play-again-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 40px rgba(26, 192, 127, 0.35);
+}
+
+.play-again-btn:active {
+  transform: translateY(-1px);
+}
+
+/* Animations */
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(20px, -30px, 0) scale(1.05);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes cellFill {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes winningCell {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes winnerGlow {
+  0%,
+  100% {
+    filter: brightness(1) drop-shadow(0 0 10px var(--winner-glow));
+  }
+  50% {
+    filter: brightness(1.3) drop-shadow(0 0 20px var(--winner-glow));
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .game-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .board {
+    gap: 0.75rem;
+  }
+
+  .cell {
+    font-size: 2.5rem;
+  }
+
+  .status-message {
+    font-size: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

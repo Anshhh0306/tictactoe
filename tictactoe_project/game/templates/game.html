@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>TicTacToe Game | Play Now</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'game/css/game.css' %}">
+</head>
+<body>
+    <div class="floating-spark"></div>
+    <div class="floating-spark"></div>
+
+    <!-- X Team Cheering Squad (Left Side) -->
+    <div class="cheering-squad x-team" id="xTeam">
+        <div class="supporter" style="animation-delay: 0s;">
+            <div class="supporter-body">
+                <div class="supporter-head"></div>
+                <div class="supporter-sign">
+                    <span>GO X!</span>
+                </div>
+            </div>
+        </div>
+        <div class="supporter" style="animation-delay: 0.3s;">
+            <div class="supporter-body">
+                <div class="supporter-head"></div>
+                <div class="supporter-sign">
+                    <span>X WINS</span>
+                </div>
+            </div>
+        </div>
+        <div class="supporter" style="animation-delay: 0.6s;">
+            <div class="supporter-body">
+                <div class="supporter-head"></div>
+                <div class="supporter-sign">
+                    <span>TEAM X</span>
+                </div>
+            </div>
+        </div>
+        <div class="confetti-container" id="xConfetti"></div>
+    </div>
+
+    <!-- O Team Cheering Squad (Right Side) -->
+    <div class="cheering-squad o-team" id="oTeam">
+        <div class="supporter" style="animation-delay: 0.2s;">
+            <div class="supporter-body">
+                <div class="supporter-head"></div>
+                <div class="supporter-sign">
+                    <span>GO O!</span>
+                </div>
+            </div>
+        </div>
+        <div class="supporter" style="animation-delay: 0.5s;">
+            <div class="supporter-body">
+                <div class="supporter-head"></div>
+                <div class="supporter-sign">
+                    <span>O WINS</span>
+                </div>
+            </div>
+        </div>
+        <div class="supporter" style="animation-delay: 0.8s;">
+            <div class="supporter-body">
+                <div class="supporter-head"></div>
+                <div class="supporter-sign">
+                    <span>TEAM O</span>
+                </div>
+            </div>
+        </div>
+        <div class="confetti-container" id="oConfetti"></div>
+    </div>
+
+    <div class="game-container">
+        <div class="glass-card">
+            <div class="game-header">
+                <div class="player-info">
+                    <div class="player-avatar">{{ username|first|upper }}</div>
+                    <div class="player-name">{{ username }}</div>
+                </div>
+                <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+            </div>
+
+            <div class="game-status">
+                {% if winner %}
+                    <span class="status-badge">Game Over</span>
+                    {% if winner == "Draw" %}
+                        <h2 class="status-message">It's a Draw! 🤝</h2>
+                    {% else %}
+                        <h2 class="status-message winner">{{ winner }} Wins! 🎉</h2>
+                    {% endif %}
+                {% else %}
+                    <span class="status-badge">Game In Progress</span>
+                    <h2 class="status-message">
+                        <span class="turn-indicator">{{ turn }}</span>'s Turn
+                    </h2>
+                {% endif %}
+            </div>
+
+            <div class="board" id="gameBoard">
+                {% for index, value in board %}
+                    <div class="cell {% if value %}filled {{ value|lower }}{% endif %}" data-index="{{ index }}">
+                        {% if value %}
+                            {{ value }}
+                        {% else %}
+                            <form method="post" style="margin:0;">
+                                {% csrf_token %}
+                                <input type="hidden" name="move" value="{{ index }}">
+                                <button type="submit" {% if winner %}disabled{% endif %}>Play</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            {% if winner %}
+                <div class="actions">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="reset" value="1" class="play-again-btn">Play Again</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Add winning cell animation and team celebrations
+        document.addEventListener('DOMContentLoaded', function() {
+            const cells = document.querySelectorAll('.cell.filled');
+            const xTeam = document.getElementById('xTeam');
+            const oTeam = document.getElementById('oTeam');
+            const xConfetti = document.getElementById('xConfetti');
+            const oConfetti = document.getElementById('oConfetti');
+            
+            console.log('Teams found:', xTeam, oTeam);
+            
+            // Check for winning combinations
+            const winPatterns = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]  // Diagonals
+            ];
+
+            const board = Array.from(document.querySelectorAll('.cell')).map(cell => {
+                return cell.textContent.trim();
+            });
+
+            console.log('Board:', board);
+
+            let winner = null;
+            winPatterns.forEach(pattern => {
+                const [a, b, c] = pattern;
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    // Highlight winning cells
+                    [a, b, c].forEach(index => {
+                        document.querySelectorAll('.cell')[index].classList.add('winning');
+                    });
+                    winner = board[a];
+                }
+            });
+
+            console.log('Winner detected:', winner);
+
+            // Animate teams based on winner
+            if (winner === 'X') {
+                console.log('X wins! Celebrating...');
+                xTeam.classList.add('celebrating');
+                oTeam.classList.add('defeated');
+                createConfetti(xConfetti);
+            } else if (winner === 'O') {
+                console.log('O wins! Celebrating...');
+                oTeam.classList.add('celebrating');
+                xTeam.classList.add('defeated');
+                createConfetti(oConfetti);
+            } else if (winner === null && !board.includes('')) {
+                console.log('Draw!');
+                // Draw - both teams neutral
+                xTeam.classList.add('neutral');
+                oTeam.classList.add('neutral');
+            }
+
+            // Create confetti effect
+            function createConfetti(container) {
+                console.log('Creating confetti in:', container);
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.animationDelay = Math.random() * 3 + 's';
+                    confetti.style.animationDuration = (2 + Math.random() * 2) + 's';
+                    confetti.style.backgroundColor = ['#50f0ff', '#ff6b9d', '#ffd700', '#35d38c', '#ff8fa3'][Math.floor(Math.random() * 5)];
+                    container.appendChild(confetti);
+                }
+                console.log('Confetti created!');
+            }
+        });
+    </script>
+</body>
+</html>
