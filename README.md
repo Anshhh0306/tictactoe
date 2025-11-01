@@ -20,3 +20,6 @@ username = admin
 password = admin
 
 *to change the username or password you can just simply go to **tictactoe_project** --> **game folder** --> **views.py** and there you will see predefined username and password and can change it easily to your liking!*
+
+<img width="1427" height="116" alt="image" src="https://github.com/user-attachments/assets/0641a4a7-0d45-4585-8acf-7a6f98789d7a" />
+
