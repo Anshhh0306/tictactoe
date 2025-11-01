@@ -13,3 +13,10 @@ So use-*
 ## To run a Django you have to use- 
 
 **python manage.py runserver**
+
+## THE USERNAME AND PASSWORD-
+
+username = admin
+password = admin
+
+*to change the username or password you can just simply go to
