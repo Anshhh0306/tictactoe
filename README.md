@@ -19,4 +19,4 @@ So use-*
 username = admin
 password = admin
 
-*to change the username or password you can just simply go to
+*to change the username or password you can just simply go to **game folder** --> **views.py** and there you will see predefined username and password and can change it easily to your liking!*
